@@ -9,33 +9,71 @@ const JoinWaitlist = props => {
   return <button className="waitlist-btn">Join Waitlist</button>;
 };
 
-const Event = props => {
-  const { event } = props;
-  return (
-    <article className="event">
-      <h2 className="event-title">{props.event.title}</h2>
-      <h3 className="event-date">{event.event_date}</h3>
-      <div
-        className="event-body"
-        dangerouslySetInnerHTML={{ __html: event.description }}
-      />
-      <div className="meeting-place">
-        <h3>{event.meeting_point}</h3>
-      </div>
-      <div className="event-meta">
-        <p className="event-cost">{event.price}</p>
-        {/*<p className="event-males">{event.male_available}</p>
+const Event = class extends React.Component {
+  constructor() {
+    super();
+  }
+  state = { showDescription: false };
+  toggleBody = () => {
+    this.setState({ showDescription: !this.state.showDescription });
+  };
+  render() {
+    const { event } = this.props;
+
+    return (
+      <article className="event">
+        <h2 className="event-title">
+          <span>{event.title}</span>
+        </h2>
+        <h3 className="event-date">
+          <span>{event.event_date}</span>
+        </h3>
+        <div className="event-body">
+          <picture>
+            <img
+              src="https://placeimg.com/480/270/people"
+              alt={event.business_name}
+            />
+          </picture>
+          <div
+            className={`event-description${
+              this.showDescription ? ' show' : ''
+            }`}
+          >
+            <div
+              dangerouslySetInnerHTML={{ __html: event.description }}
+              style={{
+                display: `${this.state.showDescription ? 'block' : 'none'}`
+              }}
+            />
+            <button onClick={this.toggleBody}>
+              {this.state.showDescription
+                ? 'Hide Description'
+                : 'Show Description'}
+            </button>
+          </div>
+        </div>
+        <div className="meeting-place">
+          <h3>{event.meeting_point}</h3>
+        </div>
+        <div className="event-meta">
+          <p className="event-cost">
+            &pound;
+            {event.price}
+          </p>
+          {/*<p className="event-males">{event.male_available}</p>
         <p className="event-females">{event.male_available}</p> */}
-      </div>
-      {event.tickets_sold < event.tickets_available ? (
-        <BookButton />
-      ) : event.allow_waitlist === 1 ? (
-        <JoinWaitlist />
-      ) : (
-        <p className="soldout-text">Sold Out</p>
-      )}
-    </article>
-  );
+        </div>
+        {event.tickets_sold < event.tickets_available ? (
+          <BookButton />
+        ) : event.allow_waitlist === 1 ? (
+          <JoinWaitlist />
+        ) : (
+          <p className="soldout-text">Sold Out</p>
+        )}
+      </article>
+    );
+  }
 };
 
 class App extends Component {
